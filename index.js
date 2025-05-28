@@ -25,8 +25,12 @@ bodyParser.json();
 // express.urlencoded() is the modern way (Express 4.16+)
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: process.env.LOCAL_HOST, credentials: true }));
 
+//All routes
+const authRoutes = require("./src/USERS/user.route");
+
+app.use("/api/auth", authRoutes);
 async function main() {
   //   await mongoose.connect("mongodb://127.0.0.1:27017/test");
   await mongoose.connect(process.env.MONGO_URI);
