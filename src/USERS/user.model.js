@@ -1,5 +1,6 @@
 // import mongoose from "mongoose";
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const { Schema, model } = require("mongoose");
 
@@ -37,6 +38,11 @@ userSchema.pre("save", async function (next) {
   user.password = hashedPassword;
   next();
 });
+
+//match password
+userSchema.methods.comparePassword = function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
 const User = new model("User", userSchema);
 
