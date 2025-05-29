@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require("./user.model");
 const bcrypt = require("bcrypt");
 const generateToken = require("../middleware/generateToken");
-const verifyToken = require("../middleware/verifyToken");
+// const verifyToken = require("../middleware/verifyToken");
 
 //Register endpoint
 
@@ -83,9 +83,9 @@ router.post("/login", async (req, res) => {
 
 //all users
 
-router.get("/users", verifyToken, async (req, res) => {
-  res.send({ message: "protected users" });
-});
+// router.get("/users", verifyToken, async (req, res) => {
+//   res.send({ message: "protected users" });
+// });
 
 //logout endpoint
 
@@ -106,10 +106,47 @@ router.delete("/user/:id", async (req, res) => {
       return res.status(401).send({ message: "User not found" });
     }
 
-    res.status(200);
+    res.status(200).send({ message: "User deleted succesfully" });
   } catch (error) {
     console.error("Error deleting User", error);
     res.status(500).send({ message: "Error deleting user" });
   }
 });
+
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find({}, "_id email role").sort({
+      createdAt: -1,
+    });
+
+    res.status(200).send(users);
+  } catch (error) {
+    console.error("Error fetching Users", error);
+    res.status(500).send({ message: "Error  fetching Users" });
+  }
+});
+
+//update the user role
+
+router.put("/users/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { role } = req.body;
+
+    const user = await User.findByIdAndUpdate(id, { role }, { new: true });
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    res.status(200).send({ message: "User role updated successfully", user });
+  } catch (error) {
+    console.error("Error fetching Users", error);
+    res.status(500).send({ message: "Error  fetching Users" });
+  }
+});
+
+//edit or update profile(p)
+router.patch;
 module.exports = router;
