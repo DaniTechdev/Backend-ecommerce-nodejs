@@ -147,6 +147,46 @@ router.put("/users/:id", async (req, res) => {
   }
 });
 
-//edit or update profile(p)
-router.patch;
+//edit or update profile(patch method update some parts of the document and not all)
+router.patch("/edit-profile", async (req, res) => {
+  try {
+    const { userId, username, profileImage, bio, profession } = req.body;
+
+    if (!userId) {
+      return res.status(404).send({ message: "User ID is required" });
+    }
+
+    const user = await User.findById(userId);
+
+    // console.log(user);
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    //update profile
+    if (username !== undefined) user.username = username;
+    if (profileImage !== undefined) user.profileImage = profileImage;
+    if (bio !== undefined) user.bio = bio;
+    if (profession !== undefined) user.profession = profession;
+
+    await user.save();
+
+    res.status(200).send({
+      message: "Profile updated successfully",
+      user: {
+        _id: user._id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        profileImage: user.profileImage,
+        bio: user.bio,
+        profession: user.profession,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating profile of  User", error);
+    res.status(500).send({ message: "Error updating profile of  User" });
+  }
+});
 module.exports = router;
