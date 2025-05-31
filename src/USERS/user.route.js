@@ -127,8 +127,7 @@ router.get("/users", async (req, res) => {
 });
 
 //update the user role
-
-router.put("/users/:id", async (req, res) => {
+router.put("/user/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
