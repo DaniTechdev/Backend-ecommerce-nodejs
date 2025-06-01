@@ -134,6 +134,15 @@ router.patch("/update-product/:id", async (req, res) => {
       },
       { new: true }
     );
+
+    if (!updatedProduct) {
+      return res.status(404).send({ message: "Product not found" });
+    }
+
+    res.status(200).send({
+      message: "Product Updated succeffully",
+      product: updatedProduct,
+    });
   } catch (error) {
     console.error("Error in updating  a single product");
 
