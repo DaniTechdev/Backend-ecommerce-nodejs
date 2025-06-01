@@ -2,6 +2,7 @@ const express = require("express");
 const Products = require("./products.model");
 const Reviews = require("../reviews/reviews.model");
 const verifyToken = require("../middleware/verifyToken");
+const verifyAdmin = require("../middleware/verifyAdmin");
 const router = express.Router();
 
 //post a product route
@@ -124,32 +125,38 @@ router.get("/:id", async (req, res) => {
 });
 
 //update a product
-router.patch("/update-product/:id", verifyToken, async (req, res) => {
-  try {
-    const productId = req.params.id;
+router.patch(
+  "/update-product/:id",
+  verifyToken,
+  verifyAdmin,
+  async (req, res) => {
+    try {
+      const productId = req.params.id;
 
-    const updatedProduct = await Products.findByIdAndUpdate(
-      productId,
-      {
-        ...req.body,
-      },
-      { new: true }
-    );
+      const updatedProduct = await Products.findByIdAndUpdate(
+        productId,
+        {
+          ...req.body,
+        },
+        { new: true }
+      );
 
-    if (!updatedProduct) {
-      return res.status(404).send({ message: "Product not found" });
+      if (!updatedProduct) {
+        return res.status(404).send({ message: "Product not found" });
+      }
+
+      res.status(200).send({
+        message: "Product Updated succeffully",
+        product: updatedProduct,
+      });
+    } catch (error) {
+      console.error("Error in updating  a single product");
+      res.status(500).send({ message: "Failed in updating a single product" });
     }
-
-    res.status(200).send({
-      message: "Product Updated succeffully",
-      product: updatedProduct,
-    });
-  } catch (error) {
-    console.error("Error in updating  a single product");
-    res.status(500).send({ message: "Failed in updating a single product" });
   }
-});
+);
 
+//delete a product
 router.delete("/:id", async (req, res) => {
   try {
     const productId = req.params.id;
@@ -171,6 +178,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+//get ralated products
 router.get("/related/:id", async (req, res) => {
   try {
     const { id } = req.params;

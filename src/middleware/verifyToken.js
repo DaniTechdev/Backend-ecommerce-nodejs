@@ -6,6 +6,8 @@ const verifyToken = async (req, res, next) => {
   try {
     const token = await req.cookies.token;
     // console.log("token on verifyFunction", token);
+
+    // const token = req.headers["authorization"].split(" ")[1];
     console.log("jwt_token", jwt_secret);
 
     if (!token) {
