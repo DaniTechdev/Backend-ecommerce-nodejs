@@ -171,4 +171,41 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.get("/related/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(404).send({ message: "Product ID not found" });
+    }
+
+    const product = await Products.findById(id);
+
+    if (!product) {
+      return res.status(404).send({ message: "Product  not found" });
+    }
+
+    const titleRegex = new RegExp(
+      product.name
+        .split(" ")
+        .filter((word) => word.length > 1)
+        .join("|"),
+      "i"
+    );
+
+    const relatedProducts = await Products.find({
+      _id: { $ne: id },
+      $or: [
+        { name: { $regex: titleRegex } }, //match similar name
+        { category: product.category }, //Match same category
+      ],
+    });
+
+    res.status(200).send(relatedProducts);
+  } catch (error) {
+    console.error("Error in fetching related    product");
+    res.status(500).send({ message: "Failed to fetch related   product" });
+  }
+});
+
 module.exports = router;
