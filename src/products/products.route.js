@@ -94,4 +94,51 @@ router.get("/", async (req, res) => {
   }
 });
 
+//get single product
+
+router.get("/:id", async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const product = await Products.findById(productId).populate(
+      "author",
+      "email username"
+    );
+
+    if (!product) {
+      return res.status(404).send({ message: "Product not found" });
+    }
+
+    const reviews = await Reviews.find({ productId }).populate(
+      "userId",
+      "username email"
+    );
+
+    res.status(200).send({ product, reviews });
+  } catch (error) {
+    console.error("Error in fetching a single product");
+
+    res.status(500).send({ message: "Failed in getting a single product" });
+  }
+});
+
+//update a product
+router.patch("/update-product/:id", async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const updatedProduct = await Products.findByIdAndUpdate(
+      productId,
+      {
+        ...req.body,
+      },
+      { new: true }
+    );
+  } catch (error) {
+    console.error("Error in updating  a single product");
+
+    res.status(500).send({ message: "Failed in updating a single product" });
+  }
+});
+
 module.exports = router;
