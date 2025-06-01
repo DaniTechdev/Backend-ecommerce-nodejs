@@ -44,8 +44,51 @@ router.post("/create-product", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
+    const {
+      category,
+      color,
+      minPrice,
+      maxPrice,
+      page = 1,
+      limit = 10,
+    } = req.query;
+
+    let filter = {};
+
+    if (category && category !== "all") {
+      filter.category = category;
+    }
+
+    if (color && color !== "all") {
+      filter.color = color;
+    }
+
+    if (minPrice && maxPrice) {
+      const min = parseFloat(minPrice);
+      const max = parseFloat(maxPrice);
+
+      if (!isNaN(min) && !isNaN(max)) {
+        filter.price = { $gte: min, $lte: max };
+      }
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const totalProducts = await Products.countDocuments(filter);
+
+    const totalPages = Math.ceil(totalProducts / parseInt(limit));
+
+    //getting the products using all the available filter query
+
+    const products = await Products.find(filter)
+      .skip(skip)
+      .limit(parseInt(limit))
+      .populate("author", "email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).send({ products, totalPages, totalProducts });
   } catch (error) {
-    console.error("Error creating new product");
+    console.error("Error in getting all product");
 
     res.status(500).send({ message: "Failed in getting all product" });
   }
