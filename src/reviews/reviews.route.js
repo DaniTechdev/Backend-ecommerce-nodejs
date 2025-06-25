@@ -67,4 +67,29 @@ router.get("/total-reviews", async (req, res) => {
   }
 });
 
+//get reviews by userId
+
+router.get("/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).send({ message: "User ID is required" });
+  }
+  try {
+    const reviews = await Reviews.find({ userId: userId }).sort({
+      ceatedAt: -1,
+    });
+
+    if (!reviews || reviews.length === 0) {
+      return res
+        .status(404)
+        .send({ message: "No reviews found for this user" });
+    }
+    res.status(200).send(reviews);
+  } catch (error) {
+    console.error("Error fetching reviews by userId", error);
+    res.status(500).send({ message: "Failed to fetch reviews by userId" });
+  }
+});
+
 module.exports = router;
