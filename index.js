@@ -32,11 +32,11 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 //All routes
 const authRoutes = require("./src/USERS/user.route");
 const productRoutes = require("./src/products/products.route");
-const reviewRoutes = require("./src/reviews/reviews.router ");
+const reviewRoutes = require("./src/reviews/reviews.route.js");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
-app.use("api/reviews", reviewRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 async function main() {
   //   await mongoose.connect("mongodb://127.0.0.1:27017/test");

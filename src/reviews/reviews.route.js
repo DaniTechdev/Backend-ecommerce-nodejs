@@ -6,6 +6,8 @@ const router = express.Router();
 //Post a new review
 
 router.post("/post-review", async (req, res) => {
+  console.log("Received request to post review", req.body);
+
   try {
     const { productId, userId, rating, comment } = req.body;
     if (!comment || !userId || !productId || !rating) {
@@ -49,6 +51,19 @@ router.post("/post-review", async (req, res) => {
   } catch (error) {
     console.error("Error posting review", error);
     res.status(500).send({ message: "Failed to post review" });
+  }
+});
+
+//total review count
+
+router.get("/total-reviews", async (req, res) => {
+  try {
+    const totalReviews = await Reviews.countDocuments({});
+
+    res.status(200).send({ totalReviews });
+  } catch (error) {
+    console.error("Error fetching total reviews", error);
+    res.status(500).send({ message: "Failed to fetch total review counts" });
   }
 });
 
