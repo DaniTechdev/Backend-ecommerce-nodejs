@@ -23,6 +23,7 @@ const verifyToken = async (req, res, next) => {
     req.userId = decoded.userId;
 
     req.role = decoded.role;
+
     next();
   } catch (error) {
     console.error("Error while verifying token");
