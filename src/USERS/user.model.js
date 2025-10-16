@@ -10,7 +10,7 @@ const userSchema = new Schema({
   password: { type: String, require: true },
   role: {
     type: String,
-    default: "user",
+    default: "admin",
   },
   profileImage: String,
   bio: { type: String, maxlength: 200 },

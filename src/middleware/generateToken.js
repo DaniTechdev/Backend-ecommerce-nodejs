@@ -15,7 +15,7 @@ const generateToken = async (userId) => {
 
     const token = jwt.sign(
       { userId: user._id, role: user.role },
-      jwt_secret, // ← This must match your verification secret
+      jwt_secret, //  This must match your verification secret
       { expiresIn: "1h" } // Use expire for token lifetime
     );
 
